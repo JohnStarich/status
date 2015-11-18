@@ -14,7 +14,10 @@ function print_usage() {
 	echo "    entrypoint.sh stdin < [file_name]" >&2
 }
 
-if [[ $CMD == 'file' ]]; then
+if [ -f $SERVICES_FILE ]; then
+	echo 'Services file was found.' >&2
+	echo 'Starting up with services.json' >&2
+elif [[ $CMD == 'file' ]]; then
 	echo 'Reading services file from file location.' >&2
 	if [ $ARG ]; then
 		# if a file name was provided, move it to services.json
