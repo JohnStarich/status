@@ -35,8 +35,8 @@ if($error_code = json_last_error()) {
 <html>
 <head>
 	<title>Systems Status Report</title>
-	<link rel="stylesheet" type="text/css" href="style.css">
-	<link rel="stylesheet" type="text/css" href="status.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/status.css">
 </head>
 <body>
 <h1>Systems Status</h1>
