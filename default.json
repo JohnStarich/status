@@ -1,0 +1,27 @@
+{
+	"johnstarich.com": {
+		"Website": {
+			"address": "www.johnstarich.com",
+			"port": 80
+		},
+		"Database": {
+			"address": "mysql.johnstarich.com",
+			"port": 3306
+		}
+	},
+	"TeamSpeak": {
+		"Voice": {
+			"protocol": "udp",
+			"address": "ts.johnstarich.com",
+			"port": 9987
+		},
+		"File Transfer": {
+			"address": "ts.johnstarich.com",
+			"port": 30033
+		},
+		"Server": {
+			"address": "ts.johnstarich.com",
+			"port": 10011
+		}
+	}
+}

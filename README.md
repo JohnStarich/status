@@ -3,6 +3,29 @@ Status is a green and red light style status checker for any service with a boun
 
 This means that you just have to throw your services into a file with their port numbers and you're all set.
 
+## Services File
+The services file is defined very simply in a JSON format. See the [default services](default.json) file for a quick example.
+
+The document `{}` has the service domains defined in the first level. The second level are the service definitions themselves: each with a protocol, address, and port to check. Here is an example:
+
+    {
+        "Main Website": {
+            "Web": {
+                "protocol": "tcp",
+                "address": "example.com",
+                "port": 80
+            },
+            "Web SSL": {
+                "address": "example.com",
+                "port": 443
+            }
+        }
+    }
+As you can see, the protocol does not have to be defined as it assumes a default of "tcp".
+Available protocols are "tcp" and "udp".
+
+This file will be read by default from `services.json` in the same directory, but alternative methods are shown below.
+
 ## How to run it
 You can start Status in any of three ways:
 
