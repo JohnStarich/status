@@ -43,35 +43,47 @@ if($error_code = json_last_error()) {
 <div id="server_status">
 <?php
 
+if (count($service_domains) == 0) {
+	echo "No domains defined.\n";
+	die();
+}
+
 foreach ($service_domains as $service_domain => $services) {
-	echo "<div class='domain'>\n<div class='domain-name'>$service_domain</div>\n<ul class='ports'>\n";
-	foreach ($services as $service => $connection_info) {
-		$type = 'TCP';
-		if(array_key_exists('protocol', $connection_info))
-			$type = strtoupper($connection_info['protocol']);
-		if($type != 'UDP' && $type != 'TCP') {
-			echo "[Error] Invalid protocol in services.json: '$type'";
-			die();
-		}
-
-		if(! array_key_exists('address', $connection_info)) {
-			echo "[Error] No address provided for service $service in domain $service_domain";
-			die();
-		}
-		$domain = $connection_info['address'];
-
-		if(! array_key_exists('port', $connection_info)) {
-			echo "[Error] No port provided for service $service in domain $service_domain";
-			die();
-		}
-		$port = $connection_info['port'];
-
-		$status = 'down';
-		if(domainIsUp($domain, $port, $type == 'UDP'))
-			$status = 'up';
-		echo "<li class='domain-status $status description'>\n$service\n</li>\n";
+	echo "<div class='domain'>\n<div class='domain-name'>$service_domain</div>\n";
+	if (count($services) == 0) {
+		echo "No services defined.\n";
 	}
-	echo "</ul>\n</div>\n";
+	else {
+		echo "<ul class='ports'>\n";
+		foreach ($services as $service => $connection_info) {
+			$type = 'TCP';
+			if(array_key_exists('protocol', $connection_info))
+				$type = strtoupper($connection_info['protocol']);
+			if($type != 'UDP' && $type != 'TCP') {
+				echo "[Error] Invalid protocol in services.json: '$type'";
+				die();
+			}
+
+			if(! array_key_exists('address', $connection_info)) {
+				echo "[Error] No address provided for service $service in domain $service_domain";
+				die();
+			}
+			$domain = $connection_info['address'];
+
+			if(! array_key_exists('port', $connection_info)) {
+				echo "[Error] No port provided for service $service in domain $service_domain";
+				die();
+			}
+			$port = $connection_info['port'];
+
+			$status = 'down';
+			if(domainIsUp($domain, $port, $type == 'UDP'))
+				$status = 'up';
+			echo "<li class='domain-status $status description'>\n$service\n</li>\n";
+		}
+		echo "</ul>\n";
+	}
+	echo "</div>\n";
 }
 
 ?>
