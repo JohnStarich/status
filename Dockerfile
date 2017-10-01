@@ -1,8 +1,8 @@
-# Service Status Website
+# Service status checker
 FROM php:5-apache
-MAINTAINER John Starich <john.starich@thirdship.com>
+
+WORKDIR /var/www/html
+ENTRYPOINT ["bash", "entrypoint.sh"]
+CMD ["file", "services.json"]
 
 COPY . /var/www/html
-WORKDIR /var/www/html
-
-ENTRYPOINT ["bash", "entrypoint.sh"]
