@@ -1,54 +1,63 @@
 # status
-Status is a green and red light style status checker for any service with a bound network port.
+This container makes it easy to monitor your network services with a simple configuration file.
 
-This means that you just have to throw your services into a file with their port numbers and you're all set.
+Status is a traffic light status checker for any network service with an exposed port. Just put your services and their port numbers into a file and you're all set.
 
-## Services File
-The services file is defined very simply in a JSON format. See the [default services](default.json) file for a quick example.
+## Services definition
+The services definition is in a JSON format. For a simple example, see the [default services file](https://github.com/JohnStarich/status/blob/master/default.json).
 
-The document `{}` has the service domains defined in the first level. The second level are the service definitions themselves: each with a protocol, address, and port to check. Here is an example:
+The first level in the definition contains the "domain" keys. These can be whatever you like! I typically use something like `"example.com"` or `"Main website"` to group all of one site's services together.
+
+The second level are the services themselves: each with a protocol (`"tcp"` or `"udp"`), address (hostname or IP address), and the port to scan. Here is an example:
 
 ```json
 {
     "Main Website": {
-        "Web": {
+        "Web (HTTP)": {
             "protocol": "tcp",
             "address": "example.com",
             "port": 80
         },
-        "Web SSL": {
+        "Web (HTTPS)": {
             "address": "example.com",
             "port": 443
+        },
+        "MySQL": {
+            "address": "192.168.1.2",
+            "port": 3306
         }
     }
 }
 ```
 
-As you can see, the protocol does not have to be defined as it assumes a default of "tcp".
-Available protocols are "tcp" and "udp".
+As you can see above, the protocol does not have to be defined because it defaults to `"tcp"`.
 
 This file will be read by default from `services.json` in the same directory, but alternative methods are shown below.
 
 ## How to run it
-You can start Status in any of three ways:
+You can run Status in three ways: from a custom services file, a JSON string, or standard input.
 
 ### File
-If you have a file in your container where your services are defined, you can just run the following:
+If you have a file in your container where your services are defined, you can run one of the following:
 
 ```bash
+# Use file already in the container
 docker run --detach --publish 80:80 johnstarich/status file default.json
+# Mount a file inside the container and use that instead
+docker run --detach --publish 80:80 --volume /path/to/services.json:/var/www/html/services.json johnstarich/status file services.json
 ```
-Be sure and replace `default.json` with the name of your file.
 
-### Json String
-If you want to just feed the container a JSON string, you can do that too! Just run something like the following:
+Be sure and replace `/path/to/services.json` with the path of your file.
+
+### JSON String
+If you want to feed the container a JSON string, you can do that too! Run something like this:
 
 ```bash
 docker run --detach --publish 80:80 johnstarich/status json '{"example.com": {"Website": {"address": "example.com", "port": 80}}}'
 ```
 
 ### Standard Input
-Last, but not least, you can also read your services definition from stdin. This is a bit trickier, given that the docker CLI doesn't make it easy to pass in information like this.
+You can also read your services definition from stdin. This is a bit trickier, given that the docker CLI doesn't make it easy to pass in information like this. Unfortunately, after it starts running with interactive mode and stdin from a file, the `^C` signals don't work anymore.
 
 Any of the following should work from a bash command line:
 
@@ -57,10 +66,9 @@ docker run -i --publish 80:80 johnstarich/status stdin < local_services_file.jso
 # or pipe it into the Docker command
 cat local_services_file.json | docker run -i --publish 80:80 johnstarich/status stdin
 ```
-(Unfortunately, after it starts running, the `^C` signals don't work anymore.)
 
 #### Note:
-This currently doesn't work very effectively with UDP ports simply because it doesn't verify the program on the other end is actually receiving data.
+This currently doesn't work very well with UDP ports because the UDP protocol doesn't have a standardized "received" response.
 
-So for now a red light means the service is definitely down while the green light means it is *most likely* up.
+This means that a green light means the service's port is accessible, and a red light indicates the UDP service is *not* accessible.
 
